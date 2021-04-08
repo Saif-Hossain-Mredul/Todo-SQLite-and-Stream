@@ -40,7 +40,7 @@ class Task {
   // That's why it needs a return statement and why it'll usually call a normal constructor in at least one path.
   //
   // So a factory does nothing different than a static method could do (in other languages often called getInstance()),
-  // except you cannot overload the constructor with a static method but you can with a factory method.
+   // except you cannot overload the constructor with a static method but you can with a factory method.
   // I.e. factory methods are a way to hide the fact that the user of your class is not calling a constructor but a static method
   //
 }
