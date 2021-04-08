@@ -7,6 +7,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // openAlertDialogue() {
+  //   return showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return AlertDialog(
+  //
+  //           shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.all(Radius.circular(16.0))),
+  //           contentPadding: EdgeInsets.only(top: 10.0),
+  //           content: Container(
+  //           ),
+  //         );
+  //       });
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +31,10 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Colors.white,
           size: 40,
         ),
-        onPressed: () {
+        onPressed:
+
+
+            () {
           Navigator.push(
               context, MaterialPageRoute(builder: (_) => AddTaskScreen()));
         },
