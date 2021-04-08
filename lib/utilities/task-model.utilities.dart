@@ -11,7 +11,7 @@ class Task {
   Map toMap() {
     final map = Map();
 
-    if(id != null) {
+    if (id != null) {
       map['id'] = id;
     }
 
@@ -25,11 +25,22 @@ class Task {
 
   factory Task.fromMap(Map map) {
     return Task.withID(
-        id: map['id'],
-        title: map['title'],
-        date: DateTime.parse(map['date']),
-        priority: map['priority'],
-        status: map['status'],
+      id: map['id'],
+      title: map['title'],
+      date: DateTime.parse(map['date']),
+      priority: map['priority'],
+      status: map['status'],
     );
   }
+
+  // In normal constructor, an instance gets created and the final variables get instantiated with the initializer list.
+  // This is why there's no return statement. The instance to return is already fixed, when executing the constructor!
+  //
+  // In a factory constructor, the instance to return is decided by the method.
+  // That's why it needs a return statement and why it'll usually call a normal constructor in at least one path.
+  //
+  // So a factory does nothing different than a static method could do (in other languages often called getInstance()),
+  // except you cannot overload the constructor with a static method but you can with a factory method.
+  // I.e. factory methods are a way to hide the fact that the user of your class is not calling a constructor but a static method
+  //
 }
