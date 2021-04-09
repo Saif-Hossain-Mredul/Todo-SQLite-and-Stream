@@ -40,9 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   getCompletedTaskCount(List tasks) {
-    final count = tasks.where((task) => task.status == 1).toList().length;
-
-    return count;
+    return tasks.where((task) => task.status == 1).toList().length;
   }
 
   @override
@@ -97,17 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: ListView.builder(
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Text('${snapshot.data[index].title}'),
-                                subtitle: Text(
-                                    '${DateFormat('MMM dd, yyyy').format(snapshot.data[index].date)} ⚫ ${snapshot.data[index].priority}'),
-                                trailing: Checkbox(
-                                  value: snapshot.data[index].status == 1
-                                      ? true
-                                      : false,
-                                  onChanged: (newVal) {},
-                                ),
-                              );
+                              return TaskTile(task: snapshot.data[index]);
                             },
                           ),
                         )
@@ -119,6 +107,27 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ),
+      ),
+    );
+  }
+}
+
+class TaskTile extends StatelessWidget {
+ final Task task;
+
+ TaskTile({this.task});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text('${task.title}'),
+      subtitle: Text(
+          '${DateFormat('MMM dd, yyyy').format(task.date)} ⚫ ${task.priority}'),
+      trailing: Checkbox(
+        value: task.status == 1
+            ? true
+            : false,
+        onChanged: (newVal) {},
       ),
     );
   }
