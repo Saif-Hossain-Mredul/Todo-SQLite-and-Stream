@@ -9,7 +9,7 @@ class Task {
   Task.withID({this.id, this.title, this.date, this.priority, this.status});
 
   Map toMap() {
-    final map = Map();
+    final map = Map<String, dynamic>();
 
     if (id != null) {
       map["id"] = id;
@@ -21,7 +21,7 @@ class Task {
     map["status"] = status;
 
     print(map.runtimeType);
-    return Map<String, dynamic>.from(map);
+    return (map);
   }
 
   factory Task.fromMap(Map map) {

@@ -95,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: ListView.builder(
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
-                              return TaskTile(task: snapshot.data[index]);
+                              return TaskTile(task: snapshot.data[index], updateTaskList: _updateTaskList,);
                             },
                           ),
                         )
@@ -113,21 +113,33 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class TaskTile extends StatelessWidget {
- final Task task;
+  final Task task;
+  final Function updateTaskList;
 
- TaskTile({this.task});
+  TaskTile({this.task,this.updateTaskList});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text('${task.title}'),
+      title: Text(
+        '${task.title}',
+        style: TextStyle(
+            decoration: task.status == 1
+                ? TextDecoration.lineThrough
+                : TextDecoration.none),
+      ),
       subtitle: Text(
-          '${DateFormat('MMM dd, yyyy').format(task.date)} ⚫ ${task.priority}'),
+          '${DateFormat('MMM dd, yyyy').format(task.date)} ⚫ ${task.priority}',style: TextStyle(
+          decoration: task.status == 1
+              ? TextDecoration.lineThrough
+              : TextDecoration.none),),
       trailing: Checkbox(
-        value: task.status == 1
-            ? true
-            : false,
-        onChanged: (newVal) {},
+        value: task.status == 1 ? true : false,
+        onChanged: (newVal) {
+          task.status = newVal ? 1 : 0;
+          DatabaseHelper.instance.updateTask(task);
+          updateTaskList();
+        },
       ),
     );
   }
