@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:my_app_part1_and_part2/screens/addTask.Screen.dart';
 import 'package:my_app_part1_and_part2/services/sql/database-helper.service.dart';
 import 'package:my_app_part1_and_part2/utilities/task-model.utilities.dart';
@@ -38,6 +39,12 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  getCompletedTaskCount(List tasks) {
+    final count = tasks.where((task) => task.status == 1).toList().length;
+
+    return count;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +56,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (_) => AddTaskScreen()));
+              context,
+              MaterialPageRoute(
+                  builder: (_) =>
+                      AddTaskScreen(updateTaskList: _updateTaskList)));
         },
       ),
       body: SafeArea(
@@ -78,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 25),
                           child: Text(
-                            '1 of 10',
+                            '${getCompletedTaskCount(snapshot.data)} of ${snapshot.data.length}',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w600),
                           ),
@@ -89,14 +99,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             itemBuilder: (context, index) {
                               return ListTile(
                                 title: Text('${snapshot.data[index].title}'),
-                                subtitle: Text('2 Days ago'),
+                                subtitle: Text(
+                                    '${DateFormat('MMM dd, yyyy').format(snapshot.data[index].date)} ⚫ ${snapshot.data[index].priority}'),
                                 trailing: Checkbox(
                                   value: snapshot.data[index].status == 1
                                       ? true
                                       : false,
-                                  onChanged: (newVal) {
-                                    
-                                  },
+                                  onChanged: (newVal) {},
                                 ),
                               );
                             },

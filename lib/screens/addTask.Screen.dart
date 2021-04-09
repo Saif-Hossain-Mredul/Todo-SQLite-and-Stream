@@ -5,6 +5,11 @@ import 'package:my_app_part1_and_part2/services/sql/database-helper.service.dart
 import 'package:my_app_part1_and_part2/utilities/task-model.utilities.dart';
 
 class AddTaskScreen extends StatefulWidget {
+
+  final Function updateTaskList; 
+
+  AddTaskScreen({this.updateTaskList});
+
   @override
   _AddTaskScreenState createState() => _AddTaskScreenState();
 }
@@ -37,14 +42,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   _submit() async {
     print(_date);
     Task task = Task();
-
-    task.id = 1;
+    
     task.title = _title;
     task.date = _date;
     task.status = 0;
     task.priority = _priority;
 
     await DatabaseHelper.instance.insertTask(task);
+    widget.updateTaskList();
     Navigator.pop(context);
   }
 
