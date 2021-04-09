@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_app_part1_and_part2/screens/addTask.Screen.dart';
+import 'package:my_app_part1_and_part2/services/sql/database-helper.service.dart';
+import 'package:my_app_part1_and_part2/utilities/task-model.utilities.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -22,6 +24,20 @@ class _HomeScreenState extends State<HomeScreen> {
   //       });
   // }
 
+  Future<List<Task>> _taskList;
+
+  @override
+  void initState() {
+    _updateTaskList();
+    super.initState();
+  }
+
+  _updateTaskList() {
+    setState(() {
+      _taskList = DatabaseHelper.instance.getTaskList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,10 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Colors.white,
           size: 40,
         ),
-        onPressed:
-
-
-            () {
+        onPressed: () {
           Navigator.push(
               context, MaterialPageRoute(builder: (_) => AddTaskScreen()));
         },
@@ -42,42 +55,59 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(left: 5, right: 5, top: 60, bottom: 5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 25),
-                child: Text(
-                  'My tasks',
-                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 25),
-                child: Text(
-                  '1 of 10',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text('Task Name'),
-                      subtitle: Text('2 Days ago'),
-                      trailing: Checkbox(
-                        value: true,
-                        onChanged: (newVal) {},
-                      ),
+          child: FutureBuilder(
+            future: _taskList,
+            builder: (context, snapshot) {
+              print(snapshot.data);
+
+              return snapshot.hasData
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 25),
+                          child: Text(
+                            'My tasks',
+                            style: TextStyle(
+                                fontSize: 40, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 25),
+                          child: Text(
+                            '1 of 10',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text('${snapshot.data[index].title}'),
+                                subtitle: Text('2 Days ago'),
+                                trailing: Checkbox(
+                                  value: snapshot.data[index].status == 1
+                                      ? true
+                                      : false,
+                                  onChanged: (newVal) {
+                                    
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                      ],
+                    )
+                  : Center(
+                      child: CircularProgressIndicator(),
                     );
-                  },
-                ),
-              )
-            ],
+            },
           ),
         ),
       ),

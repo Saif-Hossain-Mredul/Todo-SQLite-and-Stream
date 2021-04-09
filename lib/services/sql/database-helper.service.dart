@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:my_app_part1_and_part2/utilities/task-model.utilities.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -32,6 +31,8 @@ class DatabaseHelper {
 
     final todoListDB =
         await openDatabase(path, version: 1, onCreate: _createDB);
+
+    return todoListDB;
   }
 
   void _createDB(Database db, int version) async {
@@ -73,7 +74,7 @@ class DatabaseHelper {
     final result = await db.insert(taskTable, task.toMap());
 
     ///TODO: see the results by printing it.
-    ///print(result)
+    print(result);
 
     return result;
   }

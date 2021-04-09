@@ -12,15 +12,16 @@ class Task {
     final map = Map();
 
     if (id != null) {
-      map['id'] = id;
+      map["id"] = id;
     }
 
-    map['title'] = title;
-    map['date'] = date.toIso8601String();
-    map['priority'] = priority;
-    map['status'] = status;
+    map["title"] = title;
+    map["date"] = date.toIso8601String();
+    map["priority"] = priority;
+    map["status"] = status;
 
-    return map;
+    print(map.runtimeType);
+    return Map<String, dynamic>.from(map);
   }
 
   factory Task.fromMap(Map map) {

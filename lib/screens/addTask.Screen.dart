@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:my_app_part1_and_part2/services/sql/database-helper.service.dart';
+import 'package:my_app_part1_and_part2/utilities/task-model.utilities.dart';
 
 class AddTaskScreen extends StatefulWidget {
   @override
@@ -8,7 +10,7 @@ class AddTaskScreen extends StatefulWidget {
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
-  String _title = '';
+  String _title;
   String _priority = 'Medium';
   DateTime _date = DateTime.now();
   TextEditingController _dateController = TextEditingController();
@@ -32,8 +34,17 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     }
   }
 
-  _submit() {
+  _submit() async {
     print(_date);
+    Task task = Task();
+
+    task.id = 1;
+    task.title = _title;
+    task.date = _date;
+    task.status = 0;
+    task.priority = _priority;
+
+    await DatabaseHelper.instance.insertTask(task);
     Navigator.pop(context);
   }
 
@@ -79,7 +90,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   ),
                   TextFormField(
                     onChanged: (value) {
-                      _title = value;
+                      setState(() {
+                        _title = value;
+                      });
                     },
                     style: TextStyle(fontSize: 18),
                     decoration: InputDecoration(
