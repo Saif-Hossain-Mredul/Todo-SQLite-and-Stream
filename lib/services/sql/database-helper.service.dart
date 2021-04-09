@@ -10,12 +10,12 @@ class DatabaseHelper {
 
   DatabaseHelper._instance();
 
-  String taskTable = 'task_table';
-  String colId = 'id';
-  String colTitle = 'title';
-  String colDate = 'date';
-  String colPriority = 'priority';
-  String colStatus = 'status';
+  String _taskTable = 'task_table';
+  String _colId = 'id';
+  String _colTitle = 'title';
+  String _colDate = 'date';
+  String _colPriority = 'priority';
+  String _colStatus = 'status';
 
   Future<Database> get db async {
     if (_db == null) {
@@ -36,31 +36,21 @@ class DatabaseHelper {
   }
 
   void _createDB(Database db, int version) async {
-    await db.execute('''CREATE TABLE $taskTable(
-                $colId INTEGER PRIMARY KEY AUTOINCREMENT, 
-                $colTitle TEXT, 
-                $colDate TEXT, 
-                $colPriority TEXT, 
-                $colStatus INTEGER
+    await db.execute('''CREATE TABLE $_taskTable(
+                $_colId INTEGER PRIMARY KEY AUTOINCREMENT, 
+                $_colTitle TEXT, 
+                $_colDate TEXT, 
+                $_colPriority TEXT, 
+                $_colStatus INTEGER
         )''');
   }
 
-  Future<List> getTaskMapList() async {
-    Database db = await this.db;
-
-    final List result = await db.query(taskTable);
-
-    ///TODO: see the results by printing it.
-    ///print(result)
-
-    return result;
-  }
-
   Future<List<Task>> getTaskList() async {
-    final taskMapList = await getTaskMapList();
-
     final List<Task> tasksList = [];
 
+    Database db = await this.db;
+
+    final List taskMapList = await db.query(_taskTable);
     taskMapList.forEach((taskMap) {
       tasksList.add(Task.fromMap(taskMap));
     });
@@ -71,10 +61,7 @@ class DatabaseHelper {
   Future insertTask(Task task) async {
     Database db = await this.db;
 
-    final result = await db.insert(taskTable, task.toMap());
-
-    ///TODO: see the results by printing it.
-    print(result);
+    final result = await db.insert(_taskTable, task.toMap());
 
     return result;
   }
@@ -83,9 +70,9 @@ class DatabaseHelper {
     Database db = await this.db;
 
     final result = await db.update(
-      taskTable,
+      _taskTable,
       task.toMap(),
-      where: '$colId = ?',
+      where: '$_colId = ?',
       whereArgs: [task.id],
     );
 
@@ -95,7 +82,7 @@ class DatabaseHelper {
   Future deleteTask(int id) async {
     Database db = await this.db;
     final result =
-        await db.delete(taskTable, where: '$colId = ?', whereArgs: [id]);
+        await db.delete(_taskTable, where: '$_colId = ?', whereArgs: [id]);
 
     return result;
   }
