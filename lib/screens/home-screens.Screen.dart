@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:intl/intl.dart';
 import 'package:my_app_part1_and_part2/BLoC/app-bloc.dart';
 import 'package:my_app_part1_and_part2/screens/addTask.Screen.dart';
 import 'package:my_app_part1_and_part2/services/sql/database-helper.service.dart';
-import 'package:my_app_part1_and_part2/utilities/bloc-model.utilities.dart';
-import 'package:my_app_part1_and_part2/utilities/task-model.utilities.dart';
 import 'package:my_app_part1_and_part2/widgets/task-screen-body.widget.dart';
-import 'package:my_app_part1_and_part2/widgets/task-tile.widget.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -49,13 +44,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       future: DatabaseHelper.instance.getTaskList(),
                       builder: (context, snapshot) {
                         return snapshot.hasData
-                            ? taskScreen(snapshot, getCompletedTaskCount)
+                            ? TaskScreenBody(
+                                snapshot: snapshot,
+                                getCompletedTaskCount: getCompletedTaskCount)
                             : Center(
                                 child: CircularProgressIndicator(),
                               );
                       },
                     )
-                  : TaskScreenBody(snapshot: snapshot, getCompletedTaskCount: getCompletedTaskCount,);
+                  : TaskScreenBody(
+                      snapshot: snapshot,
+                      getCompletedTaskCount: getCompletedTaskCount);
             },
           ),
         ),
@@ -63,40 +62,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-taskScreen(AsyncSnapshot snapshot, Function getCompletedTaskCount) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 25),
-        child: Text(
-          'My tasks',
-          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-        ),
-      ),
-      SizedBox(
-        height: 10,
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 25),
-        child: Text(
-          '${getCompletedTaskCount(snapshot.data)} of ${snapshot.data.length}',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-        ),
-      ),
-      Expanded(
-        child: ListView.builder(
-          itemCount: snapshot.data.length,
-          itemBuilder: (context, index) {
-            return TaskTile(
-              task: snapshot.data[index],
-            );
-          },
-        ),
-      )
-    ],
-  );
-}
-
-
