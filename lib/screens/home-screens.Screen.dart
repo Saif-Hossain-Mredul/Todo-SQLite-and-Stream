@@ -9,6 +9,9 @@ import 'package:my_app_part1_and_part2/utilities/task-model.utilities.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
+  // final taskList;
+  //
+  // HomeScreen({this.taskList});
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -31,63 +34,70 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         onPressed: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) =>
-                      AddTaskScreen()));
+              context, MaterialPageRoute(builder: (_) => AddTaskScreen()));
         },
       ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(left: 5, right: 5, top: 60, bottom: 5),
+          // ignore: missing_return
           child: StreamBuilder(
             stream: _dataBloc.taskEvent,
-
             builder: (context, snapshot) {
-              print(snapshot.data);
-
-              return snapshot.hasData
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 25),
-                          child: Text(
-                            'My tasks',
-                            style: TextStyle(
-                                fontSize: 40, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 25),
-                          child: Text(
-                            '${getCompletedTaskCount(snapshot.data)} of ${snapshot.data.length}',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: snapshot.data.length,
-                            itemBuilder: (context, index) {
-                              return TaskTile(task: snapshot.data[index], );
-                            },
-                          ),
-                        )
-                      ],
+              return snapshot.connectionState == ConnectionState.none ||
+                      snapshot.connectionState == ConnectionState.waiting
+                  ? FutureBuilder(
+                      future: DatabaseHelper.instance.getTaskList(),
+                      builder: (context, snapshot) {
+                        return snapshot.hasData
+                            ? taskScreen(snapshot, getCompletedTaskCount)
+                            : Center(
+                                child: CircularProgressIndicator(),
+                              );
+                      },
                     )
-                  : Center(
-                      child: CircularProgressIndicator(),
-                    );
+                  : taskScreen(snapshot, getCompletedTaskCount);
             },
           ),
         ),
       ),
     );
   }
+}
+
+taskScreen(AsyncSnapshot snapshot, Function getCompletedTaskCount) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 25),
+        child: Text(
+          'My tasks',
+          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+        ),
+      ),
+      SizedBox(
+        height: 10,
+      ),
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 25),
+        child: Text(
+          '${getCompletedTaskCount(snapshot.data)} of ${snapshot.data.length}',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+        ),
+      ),
+      Expanded(
+        child: ListView.builder(
+          itemCount: snapshot.data.length,
+          itemBuilder: (context, index) {
+            return TaskTile(
+              task: snapshot.data[index],
+            );
+          },
+        ),
+      )
+    ],
+  );
 }
 
 class TaskTile extends StatelessWidget {
@@ -120,10 +130,12 @@ class TaskTile extends StatelessWidget {
                   : TextDecoration.none),
         ),
         subtitle: Text(
-            '${DateFormat('MMM dd, yyyy').format(task.date)} ⚫ ${task.priority}',style: TextStyle(
-            decoration: task.status == 1
-                ? TextDecoration.lineThrough
-                : TextDecoration.none),),
+          '${DateFormat('MMM dd, yyyy').format(task.date)} ⚫ ${task.priority}',
+          style: TextStyle(
+              decoration: task.status == 1
+                  ? TextDecoration.lineThrough
+                  : TextDecoration.none),
+        ),
         trailing: Checkbox(
           value: task.status == 1 ? true : false,
           onChanged: (newVal) {
