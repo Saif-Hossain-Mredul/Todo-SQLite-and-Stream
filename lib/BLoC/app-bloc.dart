@@ -18,7 +18,6 @@ class DataBloc with ChangeNotifier {
     if (event is InsertEvent) {
       _dataBase.insertTask(event.task);
     } else if (event is UpdateEvent) {
-      print('printing in bloc ' + event.task.id.toString());
       _dataBase.updateTask(event.task);
     } else if (event is DeleteEvent) {
       _dataBase.deleteTask(event.task.id);
