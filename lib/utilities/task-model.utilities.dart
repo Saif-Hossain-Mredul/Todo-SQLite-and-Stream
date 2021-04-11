@@ -20,7 +20,6 @@ class Task {
     map["priority"] = priority;
     map["status"] = status;
 
-    print(map.runtimeType);
     return (map);
   }
 

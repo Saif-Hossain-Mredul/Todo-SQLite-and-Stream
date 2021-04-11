@@ -1,14 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:my_app_part1_and_part2/services/sql/database-helper.service.dart';
+import 'package:my_app_part1_and_part2/BLoC/app-bloc.dart';
+import 'package:my_app_part1_and_part2/utilities/bloc-model.utilities.dart';
 import 'package:my_app_part1_and_part2/utilities/task-model.utilities.dart';
+import 'package:provider/provider.dart';
 
 class AddTaskScreen extends StatefulWidget {
-
-  final Function updateTaskList; 
-
-  AddTaskScreen({this.updateTaskList});
 
   @override
   _AddTaskScreenState createState() => _AddTaskScreenState();
@@ -39,19 +37,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     }
   }
 
-  _submit() async {
-    print(_date);
-    Task task = Task();
-    
-    task.title = _title;
-    task.date = _date;
-    task.status = 0;
-    task.priority = _priority;
-
-    await DatabaseHelper.instance.insertTask(task);
-    widget.updateTaskList();
-    Navigator.pop(context);
-  }
 
   @override
   void initState() {
@@ -61,6 +46,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final _dataBloc = Provider.of<DataBloc>(context);
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -165,7 +152,18 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     height: 30,
                   ),
                   GestureDetector(
-                    onTap: _submit,
+                    onTap: (){
+                      Task task = Task();
+
+                      task.title = _title;
+                      task.date = _date;
+                      task.status = 0;
+                      task.priority = _priority;
+
+                      _dataBloc.eventControllerSink.add(InsertEvent(task: task));
+
+                      Navigator.pop(context);
+                    },
                     child: Container(
                       width: double.infinity,
                       alignment: Alignment.center,

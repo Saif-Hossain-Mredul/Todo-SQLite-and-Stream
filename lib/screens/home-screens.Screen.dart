@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
+import 'package:my_app_part1_and_part2/BLoC/app-bloc.dart';
 import 'package:my_app_part1_and_part2/screens/addTask.Screen.dart';
 import 'package:my_app_part1_and_part2/services/sql/database-helper.service.dart';
+import 'package:my_app_part1_and_part2/utilities/bloc-model.utilities.dart';
 import 'package:my_app_part1_and_part2/utilities/task-model.utilities.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -10,41 +14,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // openAlertDialogue() {
-  //   return showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return AlertDialog(
-  //
-  //           shape: RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.all(Radius.circular(16.0))),
-  //           contentPadding: EdgeInsets.only(top: 10.0),
-  //           content: Container(
-  //           ),
-  //         );
-  //       });
-  // }
-
-  Future<List<Task>> _taskList;
-
-  @override
-  void initState() {
-    _updateTaskList();
-    super.initState();
-  }
-
-  _updateTaskList() {
-    setState(() {
-      _taskList = DatabaseHelper.instance.getTaskList();
-    });
-  }
-
   getCompletedTaskCount(List tasks) {
     return tasks.where((task) => task.status == 1).toList().length;
   }
 
   @override
   Widget build(BuildContext context) {
+    final _dataBloc = Provider.of<DataBloc>(context);
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: Icon(
@@ -57,14 +34,15 @@ class _HomeScreenState extends State<HomeScreen> {
               context,
               MaterialPageRoute(
                   builder: (_) =>
-                      AddTaskScreen(updateTaskList: _updateTaskList)));
+                      AddTaskScreen()));
         },
       ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(left: 5, right: 5, top: 60, bottom: 5),
-          child: FutureBuilder(
-            future: _taskList,
+          child: StreamBuilder(
+            stream: _dataBloc.taskEvent,
+
             builder: (context, snapshot) {
               print(snapshot.data);
 
@@ -95,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: ListView.builder(
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
-                              return TaskTile(task: snapshot.data[index], updateTaskList: _updateTaskList,);
+                              return TaskTile(task: snapshot.data[index], );
                             },
                           ),
                         )
@@ -114,32 +92,45 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class TaskTile extends StatelessWidget {
   final Task task;
-  final Function updateTaskList;
 
-  TaskTile({this.task,this.updateTaskList});
+  TaskTile({this.task});
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(
-        '${task.title}',
-        style: TextStyle(
+    final _dataBloc = Provider.of<DataBloc>(context);
+
+    return Slidable(
+      actionPane: SlidableDrawerActionPane(),
+      secondaryActions: <Widget>[
+        IconSlideAction(
+          caption: 'Delete',
+          color: Colors.red,
+          icon: Icons.delete,
+          onTap: () {
+            _dataBloc.eventControllerSink.add(DeleteEvent(task: task));
+          },
+        ),
+      ],
+      child: ListTile(
+        title: Text(
+          '${task.title}',
+          style: TextStyle(
+              decoration: task.status == 1
+                  ? TextDecoration.lineThrough
+                  : TextDecoration.none),
+        ),
+        subtitle: Text(
+            '${DateFormat('MMM dd, yyyy').format(task.date)} ⚫ ${task.priority}',style: TextStyle(
             decoration: task.status == 1
                 ? TextDecoration.lineThrough
-                : TextDecoration.none),
-      ),
-      subtitle: Text(
-          '${DateFormat('MMM dd, yyyy').format(task.date)} ⚫ ${task.priority}',style: TextStyle(
-          decoration: task.status == 1
-              ? TextDecoration.lineThrough
-              : TextDecoration.none),),
-      trailing: Checkbox(
-        value: task.status == 1 ? true : false,
-        onChanged: (newVal) {
-          task.status = newVal ? 1 : 0;
-          DatabaseHelper.instance.updateTask(task);
-          updateTaskList();
-        },
+                : TextDecoration.none),),
+        trailing: Checkbox(
+          value: task.status == 1 ? true : false,
+          onChanged: (newVal) {
+            task.status = newVal ? 1 : 0;
+            _dataBloc.eventControllerSink.add(UpdateEvent(task: task));
+          },
+        ),
       ),
     );
   }
