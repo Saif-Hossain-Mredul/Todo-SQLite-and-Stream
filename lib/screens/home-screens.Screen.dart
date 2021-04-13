@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 snapshot: snapshot,
                                 getCompletedTaskCount: getCompletedTaskCount)
                             : Center(
-                                child: CircularProgressIndicator(),
+                                child: Icon(Icons.list_alt, color: Colors.blue, size: 80,),
                               );
                       },
                     )
