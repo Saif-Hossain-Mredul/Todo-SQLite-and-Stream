@@ -11,10 +11,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  getCompletedTaskCount(List tasks) {
-    return tasks.where((task) => task.status == 1).toList().length;
-  }
-
   @override
   Widget build(BuildContext context) {
     final _dataBloc = Provider.of<DataBloc>(context);
@@ -44,17 +40,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       future: DatabaseHelper.instance.getTaskList(),
                       builder: (context, snapshot) {
                         return snapshot.hasData
-                            ? TaskScreenBody(
-                                snapshot: snapshot,
-                                getCompletedTaskCount: getCompletedTaskCount)
+                            ? TaskScreenBody(snapshot: snapshot)
                             : Center(
-                                child: Icon(Icons.list_alt, color: Colors.blue, size: 80,),
+                                child: Icon(
+                                  Icons.list_alt,
+                                  color: Colors.blue,
+                                  size: 80,
+                                ),
                               );
                       },
                     )
-                  : TaskScreenBody(
-                      snapshot: snapshot,
-                      getCompletedTaskCount: getCompletedTaskCount);
+                  : TaskScreenBody(snapshot: snapshot);
             },
           ),
         ),
