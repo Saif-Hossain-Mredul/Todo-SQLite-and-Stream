@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:my_app_part1_and_part2/services/sql/database-helper.service.dart';
-import 'package:my_app_part1_and_part2/utilities/bloc-model.utilities.dart';
+import 'file:///F:/Flutter/My%20Works/Todo-SQLite-and-BLoC/lib/BLoC/bloc-model.utilities.dart';
 
 class DataBloc with ChangeNotifier {
   final _dataBase = DatabaseHelper.instance;
