@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       future: DatabaseHelper.instance.getTaskList(),
                       builder: (context, snapshot) {
                         return snapshot.hasData
-                            ? TaskScreenBody(snapshot: snapshot)
+                            ? HomeScreenBody(snapshot: snapshot)
                             : Center(
                                 child: Icon(
                                   Icons.list_alt,
@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                       },
                     )
-                  : TaskScreenBody(snapshot: snapshot);
+                  : HomeScreenBody(snapshot: snapshot);
             },
           ),
         ),

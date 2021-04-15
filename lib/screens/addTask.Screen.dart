@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:my_app_part1_and_part2/BLoC/app-bloc.dart';
-import 'file:///F:/Flutter/My%20Works/Todo-SQLite-and-BLoC/lib/BLoC/bloc-model.utilities.dart';
+import 'package:my_app_part1_and_part2/BLoC/bloc-model.utilities.dart';
 import 'package:my_app_part1_and_part2/utilities/task-model.utilities.dart';
 import 'package:provider/provider.dart';
 
