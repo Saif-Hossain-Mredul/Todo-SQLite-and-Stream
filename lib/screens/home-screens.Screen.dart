@@ -39,9 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context, snapshot) {
                       return snapshot.hasData
                           ? Padding(
-                        padding: EdgeInsets.only(top: 60, bottom: 5),
-                            child: HomeScreenBody(snapshot: snapshot),
-                          )
+                              padding: EdgeInsets.only(top: 60, bottom: 5),
+                              child: HomeScreenBody(snapshot: snapshot),
+                            )
                           : Center(
                               child: Icon(
                                 Icons.list_alt,
@@ -51,7 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                     },
                   )
-                : HomeScreenBody(snapshot: snapshot);
+                : Padding(
+                    padding: EdgeInsets.only(top: 60, bottom: 5),
+                    child: HomeScreenBody(snapshot: snapshot),
+                  );
           },
         ),
       ),
