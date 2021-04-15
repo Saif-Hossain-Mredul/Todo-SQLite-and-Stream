@@ -29,31 +29,30 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(left: 5, right: 5, top: 60, bottom: 5),
-          // ignore: missing_return
-          child: StreamBuilder(
-            stream: _dataBloc.taskEvent,
-            builder: (context, snapshot) {
-              return snapshot.connectionState == ConnectionState.none ||
-                      snapshot.connectionState == ConnectionState.waiting
-                  ? FutureBuilder(
-                      future: DatabaseHelper.instance.getTaskList(),
-                      builder: (context, snapshot) {
-                        return snapshot.hasData
-                            ? HomeScreenBody(snapshot: snapshot)
-                            : Center(
-                                child: Icon(
-                                  Icons.list_alt,
-                                  color: Colors.blue,
-                                  size: 80,
-                                ),
-                              );
-                      },
-                    )
-                  : HomeScreenBody(snapshot: snapshot);
-            },
-          ),
+        child: StreamBuilder(
+          stream: _dataBloc.taskEvent,
+          builder: (context, snapshot) {
+            return snapshot.connectionState == ConnectionState.none ||
+                    snapshot.connectionState == ConnectionState.waiting
+                ? FutureBuilder(
+                    future: DatabaseHelper.instance.getTaskList(),
+                    builder: (context, snapshot) {
+                      return snapshot.hasData
+                          ? Padding(
+                        padding: EdgeInsets.only(top: 60, bottom: 5),
+                            child: HomeScreenBody(snapshot: snapshot),
+                          )
+                          : Center(
+                              child: Icon(
+                                Icons.list_alt,
+                                color: Colors.blue,
+                                size: 80,
+                              ),
+                            );
+                    },
+                  )
+                : HomeScreenBody(snapshot: snapshot);
+          },
         ),
       ),
     );
