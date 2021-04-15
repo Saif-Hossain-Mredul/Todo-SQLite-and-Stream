@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app_part1_and_part2/BLoC/app-bloc.dart';
 import 'package:my_app_part1_and_part2/screens/addTask.Screen.dart';
@@ -24,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (_) => AddTaskScreen()));
+              context, CupertinoPageRoute(builder: (_) => AddTaskScreen()));
         },
       ),
       body: SafeArea(
