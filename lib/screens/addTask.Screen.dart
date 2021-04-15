@@ -7,7 +7,6 @@ import 'package:my_app_part1_and_part2/utilities/task-model.utilities.dart';
 import 'package:provider/provider.dart';
 
 class AddTaskScreen extends StatefulWidget {
-
   @override
   _AddTaskScreenState createState() => _AddTaskScreenState();
 }
@@ -18,7 +17,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   DateTime _date = DateTime.now();
   TextEditingController _dateController = TextEditingController();
   final List<String> _priorities = ['Low', 'Medium', 'High'];
-
+  final _globalKey = GlobalKey<ScaffoldState>();
 
   _handleDatePicker() async {
     final DateTime date = await showDatePicker(
@@ -37,7 +36,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -53,6 +51,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        key: _globalKey,
         body: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
@@ -93,9 +92,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10)),
                     ),
-                    validator: (input) => input.trim().isEmpty
-                        ? 'Please enter a task title'
-                        : null,
                   ),
                   SizedBox(
                     height: 20,
@@ -152,17 +148,26 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     height: 30,
                   ),
                   GestureDetector(
-                    onTap: (){
-                      Task task = Task();
+                    onTap: () {
+                      if (_title == null || _title.trim().isEmpty) {
+                        final snackBar = SnackBar(
+                          content: Text('Please set a task title'),
+                        );
 
-                      task.title = _title;
-                      task.date = _date;
-                      task.status = 0;
-                      task.priority = _priority;
+                        _globalKey.currentState.showSnackBar(snackBar);
+                      } else {
+                        Task task = Task();
 
-                      _dataBloc.eventControllerSink.add(InsertEvent(task: task));
+                        task.title = _title;
+                        task.date = _date;
+                        task.status = 0;
+                        task.priority = _priority;
 
-                      Navigator.pop(context);
+                        _dataBloc.eventControllerSink
+                            .add(InsertEvent(task: task));
+
+                        Navigator.pop(context);
+                      }
                     },
                     child: Container(
                       width: double.infinity,
